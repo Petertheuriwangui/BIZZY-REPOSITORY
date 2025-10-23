@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="list-group shadow-sm">
+                <button class="list-group-item list-group-item-action active" data-bs-toggle="tab" data-bs-target="#profileContent">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="list-group-item list-group-item-action" data-bs-toggle="tab" data-bs-target="#editProfileContent">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button class="list-group-item list-group-item-action" data-bs-toggle="tab" data-bs-target="#settingsContent">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-3 p-4">
+                <div class="card-body">
+                    
+                    <!-- Profile Picture -->
+                    {% if profile.profile_image %}
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('static', filename=profile.profile_image.split('static/')[1]) }}" 
+                             class="img-thumbnail rounded-circle profile-image" />
+                    </div>
+                {% endif %}
+                
+                <!-- Add CSS to Force the Image to be Round -->
+                <style>
+                    .profile-image {
+                        width: 150px; 
+                        height: 150px; 
+                        border-radius: 50%; /* Ensures a perfect circle */
+                        object-fit: cover; /* Ensures the image covers the whole area */
+                    }
+                </style>
+                
+
+                    <h3 class="text-primary fw-bold text-center">{{ user.first_name }} {{ user.second_name }}</h3>
+                    <p class="text-muted text-center">@{{ user.username }}</p>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-4">
+                        <!-- Profile Tab -->
+                        <div class="tab-pane fade show active" id="profileContent">
+                            <h5 class="text-primary fw-bold mb-3"><i class="fas fa-info-circle"></i> User Information</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Email:</strong> {{ profile.email or 'N/A' }}</li>
+                                <li class="list-group-item"><strong>Phone:</strong> {{ profile.phone or 'N/A' }}</li>
+                                <li class="list-group-item"><strong>Location:</strong> {{ profile.location or 'N/A' }}</li>
+                            </ul>
+                        </div>
+
+                        <!-- Edit Profile Tab -->
+                        <div class="tab-pane fade" id="editProfileContent">
+                            <form method="POST" enctype="multipart/form-data">
+                                <h5 class="text-primary fw-bold mb-3"><i class="fas fa-edit"></i> Update Profile</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Profile Image</label>
+                                    <input type="file" name="profile_image" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <input type="email" name="email" value="{{ profile.email or '' }}" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Phone</label>
+                                    <input type="text" name="phone" value="{{ profile.phone or '' }}" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Location</label>
+                                    <input type="text" name="location" value="{{ profile.location or '' }}" class="form-control" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+                            </form>
+                        </div>
+
+                        <!-- Settings Tab -->
+                        <div class="tab-pane fade" id="settingsContent">
+                            <h5 class="text-primary fw-bold mb-3"><i class="fas fa-user-cog"></i> Account Settings</h5>
+                            
+                            <form action="/update_password" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Old Password</label>
+                                    <input type="password" name="old_password" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">New Password</label>
+                                    <input type="password" name="new_password" class="form-control" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100">Update Password</button>
+                            </form>
+
+                            <hr>
+
+                            <form action="/delete_account" method="POST" 
+                                  onsubmit="return confirm('Are you sure you want to delete your account? This action is irreversible.');">
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="fas fa-trash"></i> Delete Account
+                                </button>
+                            </form>
+                        </div>
+                    </div> <!-- End Tab Content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('views.listing') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-list"></i> Advertise
+                </a>
+                <a href="{{ url_for('views.user_posts') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-file-alt"></i> Your Adverts
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Sidebar Styling */
+    .list-group-item {
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    .list-group-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Dark Mode */
+    .dark-mode {
+        background-color: #121212;
+        color: white;
+    }
+    .dark-mode .card {
+        background-color: #222;
+        color: white;
+    }
+    .dark-mode .form-control {
+        background-color: #333;
+        color: white;
+    }
+</style>
+
+{% endblock %}

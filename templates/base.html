@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busy | Online Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <link rel="icon" href="static/images/favi.png" type="image/png">
+   
+    <style>
+        
+         /* Electric Blue */
+         :root {
+                --primary-color:rgba(255, 4, 4, 1); /*  --primary-color:rgb(255, 138, 4),rgb(12, 174, 85); --primary-color:rgb(7, 135, 255)   rgba(22, 193, 232, 0.82)*/
+                --secondary-color:rgba(255, 4, 4, 1); /* Slightly darker yellow */
+                --accent--color:rgba(8, 168, 171, 1); /* Light yellow (lemon chiffon) */
+            }
+            .dropdown-menu{
+                background: rgba(255, 255, 255, 0.95);
+                border-color:rgb(255, 255, 255);
+                border:4px 4px;
+            }
+            .dropdown-item{
+                color: var(--text-color);
+            }
+           .dropdown-item:hover {
+                background: var(--accent--color);
+                color:white;
+            }
+            [data-theme="dark"] {
+                --primary-color: #1e1e2f; /* Gold */
+                --secondary-color:#56ccf2; /* Goldenrod */
+                --accent-color:rgb(0, 237, 142); /* Soft yellow */
+                --bg-color:rgb(0, 0, 0); /* Dark muted yellowish-brown */
+                --text-color:rgb(255, 255, 255); /* Light yellow text */
+                --card-bg: #3d3b2b; /* Dark golden brown */
+                --border-color:rgb(255, 255, 255); /* Dark goldenrod */
+    
+                --profile-bg:rgb(28, 176, 231);
+                --profile-text: #e2e8f0;
+                --profile-secondary: #94a3b8;
+            }
+    
+            [data-theme="dark"] .theme-text {
+                color: var(--profile-text);
+            }
+            
+            [data-theme="dark"] .theme-text-secondary {
+                color: var(--profile-secondary);
+            }
+            
+            [data-theme="dark"] .theme-icon {
+                color: var(--accent-color);
+            }
+            
+      
+        [data-theme="dark"] .dropdown-menu {
+            background: rgba(30, 3, 50, 0.95);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .dropdown-item:hover {
+            background: var(--accent-color);
+            color:black;
+        }
+
+        [data-theme="dark"] .form-check-input {
+            background-color: var(--border-color);
+            border-color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            
+        }
+        [data-theme="dark"] .categoryList{
+            color:white;
+        }
+        body {
+            margin: 0;
+            overflow: auto;
+            background-color: var(--bg-color, rgba(255, 255, 255, 1)); /* Light yellow background */
+            color: var(--text-color, #2c2a1e); /* Dark text for contrast */
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 150%;
+            max-width: 1250px;
+            height: 50px;
+            position: relative;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .navbar .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .nav-item.dropdown .dropdown-menu {
+            min-width: 200px;
+             border-color:rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .navbar {
+                width: 90%;
+                padding: 4px 6px;
+            }
+        
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+        
+            .navbar .nav-link {
+                font-size: 0.8rem;
+            }
+        
+            .navbar .container {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        
+.navbar:hover {
+    background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.1);
+}
+
+.navbar .nav-link {
+    color: #fff;
+    position: relative;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar .nav-link::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navbar .nav-link:hover {
+    color: black;
+}
+[data-theme="dark"] .navbar .nav-link:hover {
+    color: rgb(255, 204, 0);
+}
+
+.navbar .nav-link:hover::after {
+    width: 80%;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 10px var(--secondary-color);
+}
+
+.main-container {
+    padding-bottom: 1rem;
+    margin-top: 30px;
+    width: 100%;
+    
+}
+    .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+
+.black { color: black; }
+.green { color: green; }
+.red { color: red; }
+
+
+
+.letter {
+    opacity: 0;
+    animation: fade 1.5s infinite;
+}
+
+@keyframes fade {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* Assigning animation delays and colors */
+.letter:nth-child(1) { animation-delay: 0s; color: black; }
+.letter:nth-child(2) { animation-delay: 0.1s; color: black; }
+.letter:nth-child(3) { animation-delay: 0.2s; color: black; }
+.letter:nth-child(4) { animation-delay: 0.4s; color: green; }
+.letter:nth-child(5) { animation-delay: 0.6s; color: red; }
+
+/*dark mode*/
+/* Default Styling */
+.loading {
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    gap: 5px;
+}
+
+/* Adjust font size based on screen size */
+@media (max-width: 768px) {
+    .loading {
+        font-size: 0.8rem; /* Smaller for mobile screens */
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .loading {
+        font-size: 0.8rem; /* Even smaller for very small screens */
+        gap: 2px; /* Reduce spacing */
+    }
+    
+}
+
+/* Dark Mode Support */
+[data-theme="dark"]{
+    .letter:nth-child(1) { color:rgb(255, 0, 0) ; }
+    .letter:nth-child(2) { color:  rgb(255, 180, 0); }
+    .letter:nth-child(3) { color: rgb(255, 0, 0) ; }
+    .letter:nth-child(4) { color: limegreen; }
+    .letter:nth-child(5) { color: tomato; }
+}
+
+/* Animation */
+.letter {
+    opacity: 0;
+    animation: fade 1.5s infinite;
+}
+
+@keyframes fade {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* Assigning animation delays and colors */
+.letter:nth-child(1) { animation-delay: 0s; color: black; }
+.letter:nth-child(2) { animation-delay: 0.1s; color: rgba(255, 234, 0, 1); }
+.letter:nth-child(3) { animation-delay: 0.2s; color: rgba(0, 255, 55, 1); }
+.letter:nth-child(4) { animation-delay: 0.4s; color: rgba(176, 255, 158, 1); }
+.letter:nth-child(5) { animation-delay: 0.6s; color: rgba(0, 255, 255, 1); }
+
+
+.footer {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color:white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    height:14%;
+    font-size: 10px;
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
+   
+}
+.social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background:rgba(174, 255, 177, 0.42) ;
+    color: #333; /* Default icon color */
+    font-size: 18px;
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Facebook */
+.social-icons a.facebook:hover {
+    background:rgba(8, 88, 193, 1);
+    color: #fff;
+}
+
+/* Twitter */
+.social-icons a.twitter:hover {
+    background:rgba(0, 187, 255, 1);
+    color: #fff;
+}
+
+/* Instagram */
+.social-icons a.instagram:hover {
+    background:rgba(255, 102, 0, 1);
+    color: #ffffffff;
+}
+
+/* LinkedIn */
+.social-icons a.linkedin:hover {
+    background: #0077B5;
+    color: #fff;
+}
+.small-icon {
+    font-size: 14px; /* Smaller icons */
+    margin-right: 5px; /* Reduce spacing */
+}
+
+.navbar .nav-link {
+    font-size: 14px; /* Reduce text size */
+    padding: 5px 8px; /* Adjust padding */
+}
+
+/* Responsive Styling for Small Screens */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 5px 10px; /* Reduce padding */
+    }
+
+    .small-icon {
+        font-size: 12px; /* Even smaller icons for better fit */
+    }
+
+    .navbar .nav-link {
+        font-size: 13px; /* Reduce text size for compact display */
+    }
+
+    .dropdown-menu {
+        font-size: 14px;
+    }
+}
+@media screen and (max-width: 600px) {
+    header {
+        padding: 8px 15px;
+    }
+
+    .logo-container img {
+        height: 30px; /* Slightly smaller logo */
+        max-width: 100px;
+    }
+
+    .search-container input {
+        max-width: 200px;
+        margin-left: -170px;
+    }
+
+    .search-container button {
+        padding: 2px 3px;
+        font-size: 9px;
+    }
+    .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin: 0 5px;
+        border-radius: 50%;
+        background:rgba(250, 255, 174, 0.42) ;
+        color: #333; /* Default icon color */
+        font-size: 18px;
+        text-decoration: none;
+        transition: 0.3s ease-in-out;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+}
+
+header {
+    display: relative;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 3px;
+    background-size: fit;
+    background-image-opacity: 0.5;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    background: #fff;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.card-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.img-fluid {
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .custom-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+
+    .img-fluid {
+        height: 140px;
+    }
+}
+
+.futuristic-btn {
+    background:var(--primary-color);
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 5px;
+    text-transform: uppercase;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.futuristic-btn::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, rgba(0, 0, 0, 0) 50%);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+}
+
+.futuristic-btn:hover::before {
+    top: -30%;
+    left: -30%;
+}
+
+.futuristic-btn:hover {
+    box-shadow: 0 0 20px rgba(250, 166, 173, 0.39);
+    transform: scale(1.05);
+    
+}
+
+.star-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.star {
+    color: gold;
+    font-size: 14px;
+}
+/* Star Rating Styles */
+.star-rating {
+display: flex;
+gap: 2px;
+padding: 3px 6px;
+border-radius: 5px;
+}
+
+.star {
+font-size: 14px;
+}
+
+.gold-star {
+color: gold;
+}
+
+.white-star {
+color: lightgray;
+}
+
+
+
+.like-icon {
+font-size: 24px;
+cursor: pointer;
+color: gray;
+transition: color 0.3s, transform 0.3s ease-in-out;
+}
+
+.liked {
+background:rgb(255, 51, 0);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+animation: pop 0.3s ease-in-out;
+}
+
+@keyframes pop {
+0% { transform: scale(1); }
+50% { transform: scale(1.3); }
+100% { transform: scale(1); }
+}
+.offer-stamp {
+    position: absolute;
+    top: 210px; /* Adjust as needed */
+    right: 10px;
+    left: 70px;
+    color: white;
+    width: 45px; /* Increased size for better visibility */
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-10deg);
+   
+}
+
+.offer-stamp img {
+    width: 100%; /* Makes it responsive to parent */
+    height: auto; /* Maintains aspect ratio */
+}
+
+</style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-light shadow w-100">
+        <div class="container d-flex justify-content-between align-items-center">
+    
+            <!-- Left Side: Brand -->
+            <a class="navbar-brand text-center d-flex align-items-center" href="/">
+                <div class="loading">
+                    <i class="fa-solid fa-cart-shopping small-icon me-1"></i>
+                    <span class="letter">B</span>
+                    <span class="letter">u</span>
+                    <span class="letter">s</span>
+                    <span class="letter">y</span>
+                </div>
+            </a>
+    
+            <!-- Center Links -->
+            <div class="d-flex">
+                {% if user.is_authenticated %}
+                <a class="nav-item nav-link me-3" href="{{ url_for('views.cart') }}">
+                    <i class="bi bi-cart-plus small-icon"></i> Cart
+                    <span class="badge bg-primary" id="cart-counter" {% if cart_count == 0 %}style="display: none;"{% endif %}>
+                        {{ cart_count }}
+                    </span>
+                </a>
+    
+                <a class="nav-item nav-link me-3" href="/">
+                    <i class="fas fa-credit-card"></i> Buy 🛍️
+                </a>
+                {% endif %}
+            </div>
+    
+            <!-- Right Side: User Actions -->
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle small-icon" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-users small-icon"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile"><i class="fas fa-user small-icon"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item d-flex justify-content-between align-items-center">
+                            <span id="themeIcon"><i class="fas fa-moon"></i> Dark/Light</span>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" id="themeSwitch">
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout"><i class="fas fa-door-closed small-icon"></i> Logout</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="nav-item nav-link me-3" href="/login">
+                    <i class="fas fa-sign-in-alt small-icon"></i> Login
+                </a>
+                <a class="nav-item nav-link me-3" href="/sign-up">
+                    <i class="fas fa-user-plus small-icon"></i> Sign Up
+                </a>
+                <a class="nav-item nav-link me-3" href="/onlogin">
+                    <i class="fas fa-shopping-bag small-icon"></i> Shop
+                </a>
+                {% endif %}
+            </div>
+    
+        </div>
+    </nav>
+    
+    
+    <div id="listingResults" class="listing-container"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <div id="toast-container" class="position-fixed top-50 start-0 translate-middle-y p-3" style="z-index: 1050;"></div>
+ 
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast-container" class="position-fixed top-50 start-0 translate-middle-y p-3" style="z-index: 1050;">
+            {% for category, message in messages %}
+                <div class="toast align-items-center text-white bg-{{ 'danger' if category == 'error' else 'success' }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body text-center">
+                            <i class="fa-solid fa-shopping-cart small-icon"></i> Bizzy 🛒
+                            <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }} me-2"></i>
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            // Close toast when screen is touched
+            document.addEventListener("touchstart", function () {
+                let toasts = document.querySelectorAll(".toast");
+                toasts.forEach(toast => {
+                    let bsToast = new bootstrap.Toast(toast);
+                    bsToast.hide();
+                });
+            });
+
+            // Auto-hide after 5 seconds
+            document.addEventListener("DOMContentLoaded", function () {
+                let toasts = document.querySelectorAll(".toast");
+                toasts.forEach(toast => {
+                    let bsToast = new bootstrap.Toast(toast, { delay: 1500 });
+                    bsToast.show();
+                });
+            });
+        </script>
+    {% endif %}
+{% endwith %}
+
+
+    <div class="main-container">
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Admin Password Modal -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascript %}
+    <script>
+        function applyTheme(theme) {
+            const themeIcon = document.getElementById("themeIcon");
+    
+            if (theme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+                document.body.classList.add("dark-mode");
+                document.getElementById("themeSwitch").checked = true;
+                themeIcon.innerHTML = '<i class="fas fa-sun"></i> Light Mode'; // 🌞 Light mode icon
+            } else {
+                document.documentElement.removeAttribute("data-theme");
+                document.body.classList.remove("dark-mode");
+                document.getElementById("themeSwitch").checked = false;
+                themeIcon.innerHTML = '<i class="fas fa-moon"></i> Dark Mode'; // 🌙 Dark mode icon
+            }
+        }
+    
+        // Check saved theme and apply on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            const savedTheme = localStorage.getItem("theme") || "light"; 
+            applyTheme(savedTheme);
+    
+            // Theme switch event listener
+            document.getElementById("themeSwitch").addEventListener("change", function () {
+                const newTheme = this.checked ? "dark" : "light";
+                localStorage.setItem("theme", newTheme);
+                applyTheme(newTheme);
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+<div class="footer">
+    <div class="social-icons">
+        <a href="https://facebook.com" target="_blank" class="facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com" target="_blank" class="twitter"><i class="fab fa-twitter"></i></a>
+        <a href="https://instagram.com" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://linkedin.com" target="_blank" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+    <a class="navbar-brand text-center" href="/"> 
+        <div class="loading">
+            <i class="fa-solid fa-cart-shopping small-icon"></i>
+            <span class="letter">B</span>
+            <span class="letter">u</span>
+            <span class="letter">s</span>
+            <span class="letter">y</span>
+        </div>
+    </a>
+    <p style="font-size:10px">&copy; 2025 BIZZY | ONLINE SHOP 
+        <a href="/privacypolicy">Privacy Policy</a> | 
+        <a href="/termsandcondition">Terms and condition</a>|
+        <a href="/contacts">Contact Us</a>|
+        <a href="/aboutus">About Us</a>|
+        <a href="/faq">FAQ</a>
+    </p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            document.querySelector(".loading-screen").style.display = "none";
+            document.querySelector(".main-content").style.display = "block";
+        }, 900); // Adjust loading time as needed
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let starContainers = document.querySelectorAll(".star-rating"); // Select all star containers
+
+        starContainers.forEach(starContainer => {
+            let randomStars = Math.random() < 0.5 ? 4 : 5; // Randomly choose 4 or 5
+
+            let starsHTML = "";
+            for (let i = 0; i < 5; i++) {
+                if (i < randomStars) {
+                    starsHTML += '<i class="fas fa-star gold-star"></i>'; // Gold star
+                } else {
+                    starsHTML += '<i class="fas fa-star white-star"></i>'; // Gray star
+                }
+            }
+
+            starContainer.innerHTML = starsHTML; // Insert stars into the container
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".offer-stamp").forEach(function (stamp) {
+            if (Math.random() < 0.09) { // 50% probability
+                stamp.classList.remove("d-none"); // Show the offer stamp
+            }
+        });
+    });
+    
+</script>
+</html>

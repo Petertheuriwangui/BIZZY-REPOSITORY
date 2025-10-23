@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bizzy Loading</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color:rgb(25, 255, 197);
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .loading {
+            font-size: 3rem;
+            font-weight: bold;
+            display: flex;
+            gap: 5px;
+        }
+        .letter {
+            opacity: 0;
+            animation: fade 1.5s infinite;
+        }
+        @keyframes fade {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+        .letter:nth-child(1) { animation-delay: 0s; color: rgb(14, 13, 13); }
+        .letter:nth-child(2) { animation-delay: 0.2s; color: rgb(15, 14, 14); }
+        .letter:nth-child(3) { animation-delay: 0.4s; color: rgb(27, 25, 25); }
+        .letter:nth-child(4) { animation-delay: 0.6s; color: green; }
+        .letter:nth-child(5) { animation-delay: 0.8s; color: red; }
+    </style>
+</head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<body>
+    <div class="loading">
+        <span class="letter">B</span>
+        <span class="letter">I</span>
+        <span class="letter">Z</span>
+        <span class="letter">Z</span>
+        <span class="letter">Y</span>
+    </div>
+</body>
+</html>

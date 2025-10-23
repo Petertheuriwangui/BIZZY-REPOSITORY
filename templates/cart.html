@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<i class="fa-solid fa-basket-shopping fa-3x"></i> My Cart
+
+<p>Click the image to view more details.</p>
+<hr>
+{% if cart_items  %}
+    <div class="container">
+        <div class="row g-3 justify-content-center">
+            {% for cart_item, listing in cart_items %}
+            <div class="col-lg-2 col-md-3 col-sm-4 col-4">
+                <div class="card small-card">
+                    <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                        <img src="{{ url_for('static', filename='uploads/' + listing.images.split(',')[0].strip()) }}"        
+                        class="d-block w-100 small-img"       
+                        alt="Listing Image">
+                    </a>
+               
+                    <div class="card-body text-center p-1">
+                        
+                        <p><strong>Price:</strong> KES {{ "{:,.0f}".format(listing.price) }}</p>
+                        <form action="{{ url_for('views.remove_from_cart') }}" method="POST">
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                            <button type="submit" class="btn futuristic-btn btn-danger w-100 mt-1 small-btn"> <i class="bi bi-trash"></i> Remove</button>
+                            <div class="btn-container d-flex justify-content-center mt-1">
+                                <a href="https://wa.me/{{ listing.phone | string | replace(' ', '') }}"
+                                class="btn futuristic-whatsapp"
+                                target="_blank"
+                                style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 5px; border-radius: 50%;">
+                                 <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i>
+                             </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <p class="text-center">Your cart is empty.</p>
+{% endif %}
+{% endblock %}

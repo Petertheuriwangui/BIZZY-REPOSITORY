@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div id="listingResults" class="listing-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<div class="listing-container container mt-5">
+    <!-- Listings Section -->
+    <div class="listing-content">
+        <div class="custom-grid">
+            {% for listing in listings %}
+            <div class="card">
+                {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+             
+                <!-- Image wrapped in a link to show.html -->
+                <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                    <img src="{{ url_for('static', filename=image_path) }}" class="card-img-top" alt="Listing Image">
+                </a>
+        
+                <!-- Like Button (Thumbs Up) -->
+                <i class="fas fa-thumbs-up like-icon position-absolute top-0 end-0 m-2" data-listing-id="{{ listing.id }}"></i>
+                <i class="position-absolute top-0 start-0 m-2 ratingValue text-gold fw-bold" data-listing-id="{{ listing.id }}"></i>
+
+                    
+             
+               <div class="offer-stamp d-none position-absolute top-10 end-0" data-listing-id="{{ listing.id }}">
+                <img src="{{ url_for('static', filename='images/stamps.png') }}" alt="Special Offer">
+            </div>
+            
+
+                <!-- Star Rating (Always Shows 5 Stars, Last One White) -->
+                <div class="card-body">
+                    
+                    <div class="star-rating mb-2">
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star white-star"></i>
+                    </div>
+        
+                    <p class="text-danger fw-bold">
+                        KES {{ "{:,.0f}".format(listing.price) }}
+                    </p>
+                    <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 1.7;">
+                        KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                    </p>
+                    
+
+
+
+                    <form action="{{ url_for('views.add_to_cart') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="btn futuristic-btn add-to-cart" data-listing-id="{{ listing.id }}">
+                            Add to Cart
+                        </button>
+                        
+                        
+                        <!-- Cart Notification (Hidden by Default) -->
+                        <div id="cart-alert" class="alert alert-success text-center" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                            Item added to cart! 🛒
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+          
+       <!-- No listings found -->
+        =
+            {% for listing in all_listings %}
+            <div class="card">
+                {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+                
+                <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                    <img src="{{ url_for('static', filename=image_path) }}" class="card-img-top" alt="Listing Image">
+                </a>
+
+                <i class="position-absolute top-0 start-0 m-2 ratingValue text-gold fw-bold" data-listing-id="{{ listing.id }}"></i>
+
+             
+
+                <div class="card-body">
+                    <div class="star-rating mb-2">
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star white-star"></i>
+                    </div>
+
+                    <p class="text-danger fw-bold">
+                        KES {{ "{:,.0f}".format(listing.price) }}
+                    </p>
+                    <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 1.7;">
+                        KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                    </p>
+
+                    <form action="{{ url_for('views.add_to_cart') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        <button class="btn futuristic-btn add-to-cart" data-listing-id="{{ listing.id }}">
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+
+          <!-- No Listings Found Message -->
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+ <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".add-to-cart").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Prevent page reload
+        
+                    let listingId = this.dataset.listingId;
+        
+                    fetch("/add_to_cart", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body: `listing_id=${listingId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        showFlashMessage(data.message, data.status);
+        
+                        if (data.status === "success") {
+                            this.innerText = "Added ✔";
+                            this.disabled = true;
+                            updateCartCounter();
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        
+               function updateCartCounter() {
+                    fetch("/cart_count")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Updated cart count:", data.count); // Debugging
+                
+                        let cartCounter = document.getElementById("cart-counter");
+                        if (cartCounter) {
+                            cartCounter.innerText = data.count;
+                
+                            if (data.count > 0) {
+                                cartCounter.style.display = "inline-block"; // Show when > 0
+                            } else {
+                                cartCounter.style.display = "none"; // Hide when 0
+                            }
+                        } else {
+                            console.error("Cart counter element not found!");
+                        }
+                    })
+                    .catch(error => console.error("Error updating cart counter:", error));
+                }
+                
+                
+            function showFlashMessage(message, category) {
+                let toastContainer = document.getElementById("toast-container");
+        
+                let toastHTML = `
+                    <div class="toast align-items-center text-white bg-${category === 'error' ? 'danger' : 'success'} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body text-center">
+                                <i class="fas fa-${category === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+        
+                toastContainer.innerHTML = toastHTML; // Inject the message
+                let toastElement = toastContainer.querySelector(".toast");
+                let bsToast = new bootstrap.Toast(toastElement); // Initialize Bootstrap Toast
+                bsToast.show(); // Show toast
+        
+                setTimeout(() => {
+
+                            bsToast.hide(); // Hide toast after 3 seconds
+                }, 3000);
+            }
+        });
+        </script>
+
+
+
+
+<!-- Custom CSS (Responsive) -->
+<style>
+    /* Small Modal */
+    .custom-modal {
+        max-width: 10cm;
+        max-height:10px; /* Small modal for listing */
+    }
+
+
+    @media (min-width: 992px) {  /* For larger screens (PC) */
+        .custom-carousel-modal {
+            max-width: 17cm;
+        }
+    }
+
+    /* Clickable Image */
+    .small-clickable-image {
+        cursor: pointer;
+        border-radius: 5px;
+        transition: transform 0.2s;
+    }
+
+    .small-clickable-image:hover {
+        transform: scale(1.05);
+    }
+
+    .custom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Default Layout */
+        gap: 10px;
+    }
+    
+    /* Adjust grid for small screens (3 columns) */
+    @media (max-width: 768px) {
+        .custom-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    /* Adjust grid for large screens (6 columns) */
+    @media (min-width: 1024px) {
+        .custom-grid {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+    
+    /* Card Styling */
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-img-top {
+        height: 180px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+
+{% endblock %}

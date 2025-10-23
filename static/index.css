@@ -1,0 +1,107 @@
+
+.containers {
+  display: flex;
+  gap: 30px;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: #aa9fc273;
+  padding: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+  
+  .container .btn {
+    display: normal;
+    align-items:bottom;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    background: #180a0a0c;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0px 10px 10px rgba(2, 45, 45, 0.537);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+  }
+  
+  .container .btn:hover {
+    width: 70px;
+    box-shadow: 0px 12px 14px rgba(0, 0, 0, 0.15);
+  }
+  
+  .container .btn .icon {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .container .btn .icon i {
+    font-size: 24px;
+    color: #000;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .container .btn:hover .icon i {
+    color: white;
+  }
+  
+  .container .btn span {
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  
+  .container .btn:hover span {
+    opacity: 1;
+  }
+  
+  .container .btn:nth-child(1):hover .icon {
+    background: linear-gradient(135deg, #2df8ff, #2a1535, #ff0050, #523f10);
+  }
+  
+  .container .btn:nth-child(2):hover .icon {
+    background: rgb(43, 14, 145);
+  }
+  
+  .container .btn:nth-child(3):hover .icon {
+    background: linear-gradient(135deg, #515bd4, #8134af, #ff0050, #ffdc80);
+  }
+  
+  .container .btn:nth-child(4):hover .icon {
+    background: #00ff5e;
+  }
+  
+  .container .btn:nth-child(5):hover .icon {
+    background: #ff0000;
+  }
+  
+  
+  .container .btn:nth-child(1):hover {
+    color: rgb(255, 55, 0);
+  }
+  
+  .container .btn:nth-child(2):hover {
+    color: #1877f2;
+  }
+  
+  .container .btn:nth-child(3):hover {
+    color: #9f0290;
+  }
+  
+  .container .btn:nth-child(4):hover {
+    color: #09b448;
+  }
+  
+  .container .btn:nth-child(5):hover {
+    color: #ff0404;
+  }
+  

@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<style>   
+ .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background:rgba(216, 226, 221, 0.03) ;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-container">
+            <h3 class="text-center mb-4 fa-dollar-sign">Sell</h3>
+            <form id="postForm" method="POST" action="/listing" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <div class="dropdown">
+                        <button class="btn btn-light w-100 text-start dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-list me-2"></i>Select Category
+                        </button>
+                        <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('electronics', 'fas fa-tv')"><i class="fas fa-tv me-2"></i>Electronics</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('vehicles', 'fas fa-car')"><i class="fas fa-car me-2"></i>Vehicles</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('fashion', 'fas fa-tshirt')"><i class="fas fa-tshirt me-2"></i>Fashion</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('real_estate', 'fas fa-home')"><i class="fas fa-home me-2"></i>Real Estate</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('services', 'fas fa-tools')"><i class="fas fa-tools me-2"></i>Services</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('jobs', 'fas fa-briefcase')"><i class="fas fa-briefcase me-2"></i>Jobs</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('pets', 'fas fa-paw')"><i class="fas fa-paw me-2"></i>Pets</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('books', 'fas fa-book')"><i class="fas fa-book me-2"></i>Books</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('art', 'fas fa-palette')"><i class="fas fa-palette me-2"></i>Art</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('sports', 'fas fa-basketball-ball')"><i class="fas fa-basketball-ball me-2"></i>Sports</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('music', 'fas fa-music')"><i class="fas fa-music me-2"></i>Music</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('collectibles', 'fas fa-star')"><i class="fas fa-star me-2"></i>Collectibles</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('home_kitchen', 'fas fa-blender')"><i class="fas fa-blender me-2"></i>Home & Kitchen</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('beauty_health', 'fas fa-heart')"><i class="fas fa-heart me-2"></i>Beauty & Health</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('gaming', 'fas fa-gamepad')"><i class="fas fa-gamepad me-2"></i>Gaming</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('food_groceries', 'fas fa-apple-alt')"><i class="fas fa-apple-alt me-2"></i>Food & Groceries</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('phones_accessories', 'fas fa-mobile-alt')"><i class="fas fa-mobile-alt me-2"></i>Phones & Accessories</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('computers_accessories', 'fas fa-laptop')"><i class="fas fa-laptop me-2"></i>Computers & Accessories</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="selectCategory('other', 'fas fa-question-circle')"><i class="fas fa-question-circle me-2"></i>Other</a></li>
+                        </ul>
+                        
+                        <input type="hidden" id="category" name="category" required>
+                    </div>
+                </div>
+                
+                <script>
+                    function selectCategory(value, iconClass) {
+                        document.getElementById("categoryDropdown").innerHTML = `<i class="${iconClass} me-2"></i> ${value.replace('_', ' ')}`;
+                        document.getElementById("category").value = value; // Store selected value for form submission
+                    }
+                </script>
+                
+               
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Item</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="e.g., phone , shoe" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price (KES)</label>
+                    <input type="number" class="form-control" id="price" name="price" placeholder="Enter price" required>
+
+                </div>
+    
+                <div class="mb-3">
+                    <label for="condition" class="form-label">Condition</label>
+                    <select class="form-select" id="condition" name="condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                        <option value="refurbished">Refurbished</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Provide details about the item eg. Brand" required></textarea>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <select class="form-select" id="location" name="location" required>
+                        <option value="">Location</option>
+                        <option value="Mukurweini">Mukurweini(Town)</option>
+                        <option value="Kamuchuni">Kamuchuni</option>
+                        <option value="Kiharo">Kiharo</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="images" class="form-label">Upload Images (Max: 10)</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="file" class="form-control d-none" id="imageInput"  name="images" multiple accept="image/*">
+                        <button type="button" class="btn btn-primary" id="addImageBtn">➕ Add Image</button>
+                    </div>
+                    <small class="muted">You can upload up to 10 images.</small>
+                </div>
+    
+                <div id="imagePreview" class="d-flex flex-wrap gap-2"></div>
+    
+                <div class="mb-3">
+                    <label for="seller" class="form-label">Seller Name</label>
+                    <input type="text" class="form-control" name="seller" id="seller" placeholder="Your Name" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="e.g., 0793548688" required oninput="formatPhoneNumber()">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                </div>
+    
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-lg btn-secondary">
+                        <i class="fas fa-upload me-3"></i> Post Ad
+                    </button>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <script>
+    let imageCount = 0;
+    const maxImages = 10;
+    const imageInput = document.getElementById('imageInput');
+    const addImageBtn = document.getElementById('addImageBtn');
+    const previewContainer = document.getElementById('imagePreview');
+
+    addImageBtn.addEventListener('click', function() {
+        if (imageCount >= maxImages) {
+            alert("You can only upload a maximum of 10 images.");
+            return;
+        }
+        imageInput.click(); // Trigger file selection
+    });
+
+    imageInput.addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        
+        files.forEach((file) => {
+            if (imageCount < maxImages && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.classList.add('position-relative');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('img-thumbnail');
+                    img.style.width = '100px';
+                    img.style.height = '100px';
+                    img.style.objectFit = 'cover';
+
+                    // Remove Button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = "&times;";
+                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'position-absolute', 'top-0', 'end-0');
+                    removeBtn.style.transform = 'translate(50%, -50%)';
+                    removeBtn.onclick = function() {
+                        imgWrapper.remove();
+                        imageCount--;
+                    };
+
+                    imgWrapper.appendChild(img);
+                    imgWrapper.appendChild(removeBtn);
+                    previewContainer.appendChild(imgWrapper);
+
+                    imageCount++;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+   
+</script>
+<script>
+    function formatPhoneNumber() {
+        let phoneInput = document.getElementById("phone");
+        let phoneNumber = phoneInput.value.trim();
+    
+        // Remove any non-numeric characters
+        phoneNumber = phoneNumber.replace(/\D/g, "");
+    
+        // Ensure it starts with "254" if the user entered "07..."
+        if (phoneNumber.startsWith("07")) {
+            phoneNumber = "254" + phoneNumber.substring(1);
+        }
+    
+        // Update the input field
+        phoneInput.value = phoneNumber;
+    }
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            try {
+                let response = await fetch('/check-payment-status');
+                let data = await response.json();
+                
+                if (!data.payment_made) {
+                    alert("You need to complete payment before posting.");
+                    window.location.href = "/mpesa-payment";
+                }
+            } catch (error) {
+                console.error("Error checking payment status:", error);
+            }
+        });
+    </script>
+    
+</body>
+</html>
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}FAQ{% endblock %}
+{% block content %}
+<h1>Frequently Asked Questions</h1>
+<ul>
+    <li><strong>How do I create an account?</strong> - Simply sign up with your username and start buying or selling. Welcome</li>
+    <li><strong>Is Bizzy secure?</strong> - Yes, we use encryption and verification for secure transactions.</li>
+    <li><strong>How do I contact support?</strong> - Reach us at +2540793548688 or <a href="mailto:support@bizzys.com">support@bizzys.com</a>.</li>
+    <li><strong>How do I report a problem?</strong> - Go to your account settings and click on the "Report a Problem" button.</li>
+    <li><strong>How do I change my password?</strong> - Go to your account settings and click on the "Change Password" button.</li>
+    <li><strong>How do I delete my account?</strong> - Go to your account settings and click on the "Delete Account" button.</li>
+    <li><strong>How do I list an item for sale?</strong> - Click on the "post" button and fill in the required details.</li>
+    <li><strong>How do I buy an item?</strong> - Click on the "buy" button and follow the payment instructions.</li>
+    <li><strong>How do I search for an item?</strong> - Use the search bar to find items by name, category</li>
+</ul>
+<style>
+    @media (max-width: 768px) {
+        li{
+            font-size: 10px;
+        }
+        h1{
+            font-size: 15px;
+        }
+    }
+
+</style>
+{% endblock %}

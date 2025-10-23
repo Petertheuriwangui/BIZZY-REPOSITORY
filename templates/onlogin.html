@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<body>
+<!-- Results will be displayed here -->
+<div id="listingResults" class="listing-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+<div id="listingResults" class="listing-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<div class="listing-container container mt-5">
+    <!-- Listings Section -->
+    <div class="listing-content">
+        <div class="custom-grid">
+            {% for listing in listings %}
+            <div class="card">
+                {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+             
+                <!-- Image wrapped in a link to show.html -->
+                <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                    <img src="{{ url_for('static', filename=image_path) }}" class="card-img-top" alt="Listing Image">
+                </a>
+        
+                <!-- Like Button (Thumbs Up) -->
+                <i class="fas fa-thumbs-up like-icon position-absolute top-0 end-0 m-2" data-listing-id="{{ listing.id }}"></i>
+                <i class="position-absolute top-0 start-0 m-2 ratingValue text-gold fw-bold" data-listing-id="{{ listing.id }}"></i>
+
+                    
+             
+               <div class="offer-stamp d-none position-absolute top-10 end-0" data-listing-id="{{ listing.id }}">
+               
+            </div>
+            
+
+                <!-- Star Rating (Always Shows 5 Stars, Last One White) -->
+                <div class="card-body">
+                    
+                    <div class="star-rating mb-2">
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star white-star"></i>
+                    </div>
+        
+                    <p class="text-danger fw-bold">
+                        KES {{ "{:,.0f}".format(listing.price) }}
+                    </p>
+                    <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 1.7;">
+                        KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                    </p>
+                    
+
+
+
+                    <form action="{{ url_for('views.add_to_cart') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="btn futuristic-btn add-to-cart" data-listing-id="{{ listing.id }}">
+                            Add to Cart
+                        </button>
+                        
+                        
+                        <!-- Cart Notification (Hidden by Default) -->
+                        <div id="cart-alert" class="alert alert-success text-center" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                            Item added to cart! 🛒
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+         <p class="text-center">No listings available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Small Modal */
+    .custom-modal {
+        max-width: 10cm;
+        max-height:10px; /* Small modal for listing */
+    }
+
+    /* Large Image Modal - Responsive */
+    .custom-carousel-modal {
+        width: 100%;
+        max-width: 12cm; /* Default for small screens */
+    }
+
+    @media (min-width: 992px) {  /* For larger screens (PC) */
+        .custom-carousel-modal {
+            max-width: 17cm;
+        }
+    }
+
+    /* Clickable Image */
+    .small-clickable-image {
+        cursor: pointer;
+        border-radius: 5px;
+        transition: transform 0.2s;
+    }
+
+    .small-clickable-image:hover {
+        transform: scale(1.05);
+    }
+
+    .custom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Default Layout */
+        gap: 10px;
+    }
+    
+    /* Adjust grid for small screens (3 columns) */
+    @media (max-width: 768px) {
+        .custom-grid {
+            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+        }
+    }
+    
+    /* Adjust grid for large screens (6 columns) */
+    @media (min-width: 1024px) {
+        .custom-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    /* Card Styling */
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-img-top {
+        height: 180px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+</style>
+
+     
+{% endblock %}

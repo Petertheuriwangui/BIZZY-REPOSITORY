@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <h2 class="text-center">Log in</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Enter your username" required>
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" class="input-field" placeholder="Enter your password" required>
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit" class="btn-login">Login</button>
+            </div><br>
+            <p class="text-center">I don’t have an account. <a href="{{ url_for('auth.sign_up') }}">Sign up</a></p>
+        </form>
+    </div>
+</div>
+
+<style>
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    padding: 20px;
+    margin-top: -50px;
+}
+
+.login-card {
+    background: var(--primary-color);
+    border-radius: 13px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+h2 {
+    color: #f6f0f0;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+label {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px var(--secondary-color);
+}
+
+.input-wrapper i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 2px solid #ffffff; 
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
+    
+}
+
+.btn-login:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(86, 204, 242, 0.2);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+        height: auto;
+        padding: 40px 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 30px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}
+.main-container {
+    padding-bottom: 1rem;
+    margin-top: 70px;
+    width: 100%;
+    padding: 0;
+}
+</style>
+
+<script>
+    function togglePassword(fieldId, eyeIcon) {
+        const field = document.getElementById(fieldId);
+        if (field.type === "password") {
+            field.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            field.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+{% endblock %}

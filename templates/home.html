@@ -1,0 +1,1175 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<body> 
+
+   <div class="carousel-container">
+        <!-- Scroll Buttons -->
+        <button class="carousel-btn carousel-left" onclick="scrollCarousel(-200)">&#10094;</button>
+        <button class="carousel-btn carousel-right" onclick="scrollCarousel(200)">&#10095;</button>
+    
+        <div class="listing-carousel">
+            <div class="carousel-grid" id="carouselGrid">
+                {% for listing in listings %}
+                    <!-- Insert Ad Card Every 5 Listings -->
+                    {% if loop.index0 % 5 == 0 and loop.index0 != 0 %}
+                    <div class="listing-card-container ad-card">
+                        <div class="listing-card">
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/bizz.png') }}" 
+                                     class="ad-image" alt="Advertisement">
+                            </a>
+                            <p class="fw-bold text-center text-white">Sponsored Ad</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if loop.index0 % 5 == 0 and loop.index0 != 0 %}
+                    <div class="listing-card-container ad-card">
+                        <div class="listing-card">
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/bizz.png') }}" 
+                                     class="ad-image" alt="Advertisement">
+                            </a>
+                            <p class="fw-bold text-center text-white">Sponsored Ad</p>
+                        </div>
+                    </div>
+                    {% endif %}
+    
+                    <!-- Regular Listing Card -->
+                    <div class="listing-card-container">
+                        <div class="stars-rating mb-2">
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star white-star"></i>
+                        </div>
+                        <div class="listing-card">
+                            {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+                            <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                                <img src="{{ url_for('static', filename=image_path) }}" class="circular-image" alt="Listing Image"width="120" height="120">
+                            </a>
+                            <p class="text-danger fw-bold">
+                                KES {{ "{:,.0f}".format(listing.price) }}
+                            </p>
+                            <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 0.7;">
+                                KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">No listings available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>    
+    
+ {% set categories = [
+        ('electronics', 'tv', 'text-primary', 'Electronics'),
+        ('vehicles', 'car', 'text-danger', 'Vehicles'),
+        ('fashion', 'tshirt', 'text-success', 'Fashion'),
+        ('real_estate', 'home', 'text-warning', 'Real Estate'),
+        ('services', 'tools', 'text-info', 'Services'),
+        ('jobs', 'briefcase', 'text-secondary', 'Jobs'),
+        ('pets', 'paw', 'text-dark', 'Pets'),
+        ('books', 'book', 'text-primary', 'Books'),
+        ('art', 'palette', 'text-danger', 'Art'),
+        ('sports', 'basketball-ball', 'text-success', 'Sports'),
+        ('music', 'music', 'text-warning', 'Music'),
+        ('collectibles', 'star', 'text-info', 'Collectibles'),
+        ('home_kitchen', 'blender', 'text-secondary', 'Home & Kitchen'),
+        ('beauty_health', 'heart', 'text-dark', 'Beauty & Health'),
+        ('gaming', 'gamepad', 'text-primary', 'Gaming'),
+        ('food_groceries', 'apple-alt', 'text-danger', 'Food & Groceries'),
+        ('phones_accessories', 'mobile-alt', 'text-info', 'Phones & Accessories'),
+        ('computers_accessories', 'laptop', 'text-secondary', 'Computers & Accessories'),
+        ('other', 'question-circle', 'text-muted', 'Other')
+    ] %}
+
+    <div class="container mt-4">
+        <!-- Search + Filters -->
+        <div class="row mb-4 align-items-center justify-content-center">
+            <!-- Search bar (always centered) -->
+            <div class="col-12 d-flex justify-content-center mb-2">
+                <input type="text" id="searchQuery" class="form-control me-2" placeholder="Search anything..." style="max-width: 450px;" />
+                <button class="btn btn-primary" onclick="applyFilters()" style="border-radius: 50px;">Go</button>
+            </div>
+        
+            <!-- Price range - Min & Max -->
+            <div class="col-6 col-md-3 d-flex justify-content-start justify-content-md-end">
+                <input type="number" id="minPrice" class="form-control price-input" placeholder="Min Price" />
+            </div>
+            <div class="col-6 col-md-3 d-flex justify-content-end justify-content-md-start">
+                <input type="number" id="maxPrice" class="form-control price-input" placeholder="Max Price" />
+            </div>
+        </div>
+        
+
+        <div class="row">
+            <!-- Left: Category List -->
+            <div class="col-md-3 col-sm-6 col-12 mb-3 category-list" style="max-width: 20%; flex: 0 0 50%;">
+                <h5>Categories</h5>
+                <ul class="list-group position-relative" id="categoryList">
+                    {% for category, icon, color, label in categories %}
+                    <li class="list-group-item d-flex justify-content-start align-items-center category-item"
+                        onmouseenter="showPreview(event, '{{ category }}')"
+                        style="cursor: pointer;">
+                        <i class="fas fa-{{ icon }} me-2 {{ color }}"></i> <span class="category-label">{{ label }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Floating Hover Preview Box -->
+            <div id="hoverPreviewBox"
+                 class="card shadow-sm bg-white border position-absolute"
+                 style="display:none; cursor: pointer;"
+                 onclick="goToCategory(currentHoveredCategory)">
+                <div id="hoverPreviewContent" class="hover-grid p-2">Loading...</div>
+            </div>
+
+            <!-- Right: Preview Area (optional placeholder or main content) -->
+            <div class="col-md-9 col-sm-8 col-12"></div>
+        </div>
+    </div>
+
+    <style>
+        .category-item {
+            font-size: 0.8rem;
+            padding: 6px 5px;
+            background: #f7f7dd39;
+        }
+
+        .category-item:hover {
+            background-color: #fff2ec8c;
+            font-weight: 500;
+        }
+
+        #hoverPreviewBox {
+            display: none;
+            position: absolute;
+            background-color: #e6e6e6ff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1050;
+            max-width: 60vw;
+        }
+
+        .hover-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
+
+        .hover-grid .preview-item {
+            background-color: #6db6ff18;
+            border-radius: 6px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            min-width: 10px;
+        }
+
+        .hover-grid .preview-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .hover-grid .title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 4px;
+            color: #333;
+        }
+
+        .hover-grid .price {
+            font-size: 0.75rem;
+            color: #28a745;
+        }
+        @media (max-width: 768px) {
+            .category-list {
+                max-width: 45% !important;
+                flex: 0 0 45% !important;
+            }
+        
+            #hoverPreviewBox {
+                left: 55% !important;
+                width: 45vw !important;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        
+            .hover-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+       
+        /* Limit width of price inputs on all screens */
+.price-input {
+    max-width: 3.5cm;
+}
+
+/* Adjust layout on smaller screens */
+@media (max-width: 768px) {
+    #searchQuery {
+        width: 90%;
+        max-width: 90%;
+    }
+
+    .btn-primary {
+        white-space: nowrap;
+    }
+}
+
+    </style>
+
+    <script>
+        let currentHoveredCategory = null;
+        const previewBox = document.getElementById('hoverPreviewBox');
+        const previewContent = document.getElementById('hoverPreviewContent');
+
+        document.getElementById("searchQuery").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") applyFilters();
+        });
+
+        function applyFilters() {
+            const search = document.getElementById('searchQuery').value.trim();
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+
+            let url = "{{ url_for('views.display') }}?";
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (minPrice) url += `min_price=${minPrice}&`;
+            if (maxPrice) url += `max_price=${maxPrice}&`;
+
+            window.location.href = url;
+        }
+
+        function goToCategory(category) {
+            if (!category) return;
+
+            const search = document.getElementById('searchQuery').value.trim();
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+
+            let url = "{{ url_for('views.display') }}?";
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            url += `category=${category}`;
+            if (minPrice) url += `&min_price=${minPrice}`;
+            if (maxPrice) url += `&max_price=${maxPrice}`;
+
+            window.location.href = url;
+        }
+
+        function showPreview(event, category) {
+            currentHoveredCategory = category;
+
+            const li = event.currentTarget;
+            const rect = li.getBoundingClientRect();
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+            previewBox.style.top = (rect.top + scrollTop) + 'px';
+            previewBox.style.left = (rect.right + 10 + scrollLeft) + 'px';
+            previewBox.style.display = 'block';
+            previewContent.innerHTML = 'Loading...';
+
+            fetch(`/preview_category/${category}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.items || data.items.length === 0) {
+                        previewContent.innerHTML = '<p class="text-muted">No items found.</p>';
+                        return;
+                    }
+
+                    previewContent.innerHTML = '';
+                    data.items.forEach(item => {
+                        const itemHTML = `
+                            <div class="preview-item" onclick="goToCategory('${category}')">
+                                <img src="${item.image_url}" alt="${item.title}" onerror="this.src='/static/default.jpg'" />
+                                <div class="title">${item.title}</div>
+                                <div class="price">Ksh ${item.price}</div>
+                            </div>`;
+                        previewContent.innerHTML += itemHTML;
+                    });
+                });
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!previewBox.contains(e.target) && !e.target.closest('.category-item')) {
+                previewBox.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            previewBox.style.display = 'none';
+        });
+    </script>
+
+
+    <div class="carousel-container">
+        <!-- Scroll Buttons -->
+        <button class="carousel-btn carousel-left" onclick="scrollCarousel(-200)">&#10094;</button>
+        <button class="carousel-btn carousel-right" onclick="scrollCarousel(200)">&#10095;</button>
+    
+        <div class="listing-carousel">
+            <div class="carousel-grid" id="carouselGrid">
+                {% for listing in listings %}
+                    <!-- Insert Ad Card Every 5 Listings -->
+                    {% if loop.index0 % 5 == 0 and loop.index0 != 0 %}
+                    <div class="listing-card-container ad-card">
+                        <div class="listing-card">
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/bizz.png') }}" 
+                                     class="ad-image" alt="Advertisement">
+                            </a>
+                            <p class="fw-bold text-center text-white">Sponsored Ad</p>
+                        </div>
+                    </div>
+                    {% endif %}
+    
+                    <!-- Regular Listing Card -->
+                    <div class="listing-card-container">
+                        <div class="stars-rating mb-2">
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star gold-star"></i>
+                            <i class="fas fa-star white-star"></i>
+                        </div>
+                        <div class="listing-card">
+                            {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+                            <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                                <img src="{{ url_for('static', filename=image_path) }}" class="circular-image" alt="Listing Image"width="120" height="120">
+                            </a>
+    
+                            <p class="text-danger fw-bold">
+                                KES {{ "{:,.0f}".format(listing.price) }}
+                            </p>
+                            <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 0.7;">
+                                KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">No listings available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div><br>
+    
+
+
+
+
+    
+  <!-- Listings Section -->
+
+<div id="listingResults" class="listing-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<div class="listing-container container mt-5">
+  
+    <div class="listing-content">
+        <div class="custom-grid">
+            {% for listing in listings %}
+            <div class="card">
+                {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+             
+                <!-- Image wrapped in a link to show.html -->
+                <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                    <img src="{{ url_for('static', filename=image_path) }}" class="card-img-top" alt="Listing Image">
+                </a>
+        
+                <!-- Like Button (Thumbs Up) -->
+                <i class="fas fa-thumbs-up like-icon position-absolute top-0 end-0 m-2" data-listing-id="{{ listing.id }}"></i>
+                <i class="position-absolute top-0 start-0 m-2 ratingValue text-gold fw-bold" data-listing-id="{{ listing.id }}"></i>
+
+                    
+             
+               <div class="offer-stamp d-none position-absolute top-10 end-0" data-listing-id="{{ listing.id }}">
+                <img src="{{ url_for('static', filename='images/stamps.png') }}" alt="Special Offer">
+            </div>
+            
+
+                <!-- Star Rating (Always Shows 5 Stars, Last One White) -->
+                <div class="card-body">
+                    
+                    <div class="star-rating mb-2">
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star white-star"></i>
+                    </div>
+                    <p class="text-muted"><i class="bi bi-file-text"></i> {{ listing.description }} </p>
+                     <p class="text-muted"><i class="bi bi-geo-alt"></i> {{ listing.location }}</p>
+        
+                    <p class="text-danger fw-bold">
+                        KES {{ "{:,.0f}".format(listing.price) }}
+                    </p>
+                    <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 1.7;">
+                        KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                    </p>
+                    
+
+
+
+                    <form action="{{ url_for('views.add_to_cart') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="btn futuristic-btn add-to-cart " data-listing-id="{{ listing.id }}">
+                            <i class="bi bi-cart-plus small-icon"></i> Add to Cart
+                        </button>
+                        
+                        
+                        <!-- Cart Notification (Hidden by Default) -->
+                        <div id="cart-alert" class="alert alert-success text-center" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                            Item added to cart! 🛒
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+         <p class="text-center">No listings available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+<div id="listingResults" class="listing-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<div class="listing-container container mt-5">
+    <!-- Listings Section -->
+    <div class="listing-content">
+        <div class="custom-grid">
+            {% for listing in listings %}
+            <div class="card">
+                {% set image_path = 'uploads/default.png' if not listing.images else 'uploads/' + listing.images.split(',')[0].strip() %}
+             
+                <!-- Image wrapped in a link to show.html -->
+                <a href="{{ url_for('views.show', listing_id=listing.id) }}">
+                    <img src="{{ url_for('static', filename=image_path) }}" class="card-img-top" alt="Listing Image">
+                </a>
+        
+                <!-- Like Button (Thumbs Up) -->
+                <i class="fas fa-thumbs-up like-icon position-absolute top-0 end-0 m-2" data-listing-id="{{ listing.id }}"></i>
+                <i class="position-absolute top-0 start-0 m-2 ratingValue text-gold fw-bold" data-listing-id="{{ listing.id }}"></i>
+
+                    
+             
+               <div class="offer-stamp d-none position-absolute top-10 end-0" data-listing-id="{{ listing.id }}">
+                <img src="{{ url_for('static', filename='images/stamps.png') }}" alt="Special Offer">
+            </div>
+            
+
+                <!-- Star Rating (Always Shows 5 Stars, Last One White) -->
+                <div class="card-body">
+                    
+                    <div class="star-rating mb-2">
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star gold-star"></i>
+                        <i class="fas fa-star white-star"></i>
+                    </div>
+                    <p class="text-muted"><i class="bi bi-file-text"></i> {{ listing.description }} </p>
+                     <p class="text-muted"><i class="bi bi-geo-alt"></i> {{ listing.location }}</p>
+        
+        
+                    <p class="text-danger fw-bold">
+                        KES {{ "{:,.0f}".format(listing.price) }}
+                    </p>
+                    <p class="text-muted text-decoration-line-through" style="font-size: 0.65rem; opacity: 1.7;">
+                        KES {{ "{:,.0f}".format(listing.price * 1.2) }}
+                    </p>
+                    
+
+
+
+                    <form action="{{ url_for('views.add_to_cart') }}" method="POST" class="mt-2">
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="btn futuristic-btn add-to-cart  " data-listing-id="{{ listing.id }}">
+                             <i class="bi bi-cart-plus small-icon "></i> Add to Cart
+                        </button>
+                        
+                        
+                        <!-- Cart Notification (Hidden by Default) -->
+                        <div id="cart-alert" class="alert alert-success text-center" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                            Item added to cart! 🛒
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+         <p class="text-center">No listings available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<div class="pagination-container">
+    {% if total > per_page %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+
+                <!-- Previous Page -->
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('views.home', page=page-1) }}">« Prev</a>
+                </li>
+
+                <!-- Page Numbers -->
+                {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
+                {% for num in range(1, total_pages + 1) %}
+                    <li class="page-item {% if num == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('views.home', page=num) }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                <!-- Next Page -->
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('views.home', page=page+1) }}">Next »</a>
+                </li>
+
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
+</body>
+<script>
+    function filterByCategory() {
+        let category = document.getElementById("searchInput").value.trim();
+    
+        if (category === "") {
+            document.getElementById("listingResults").innerHTML = `
+                <br>
+                <p class="text-center text-danger fw-bold" style="font-size: 1.1rem; margin-top: 15px;">
+                    ❌ Please enter a valid category to proceed.
+                </p>
+            `;
+            return;
+        }
+    
+        fetch(`/search?category=${category}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsContainer = document.getElementById("listingResults");
+                resultsContainer.innerHTML = ""; // Clear previous results
+    
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <br><br>
+                        <p class="text-center text-danger fw-bold" style="font-size: 1.1rem; margin-top: 10px;">
+                            📥 No items found in this category.
+                        </p>
+                    `;
+                    return;
+                }
+    
+                let gridContainer = document.createElement("div");
+                gridContainer.classList.add("custom-grid");
+    
+                data.forEach(item => {
+                    let listingDiv = document.createElement("div");
+                    listingDiv.classList.add("card");
+    
+                    // Image Handling (First Image for the Card)
+                    let firstImage = item.images.length > 0 ? `/static/uploads/${item.images[0].trim()}` : "/static/uploads/default.png";
+    
+                    // Create the card's inner content
+                    listingDiv.innerHTML = `
+                        <img src="${firstImage}" class="card-img-top" alt="Listing Image">
+                        <div class="card-body">
+                            <h6 class="card-title">${item.title}</h6>
+                            <p><strong>Price:</strong> KES ${item.price}</p>
+    
+                            <button class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#listingModal${item.id}">
+                                View Details
+                            </button>
+    
+                            <button class="btn btn-sm btn-success w-100 add-to-cart" data-listing-id="${item.id}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    `;
+    
+                    gridContainer.appendChild(listingDiv);
+                });
+    
+                resultsContainer.appendChild(gridContainer);
+    
+                // Add event listener to all "Add to Cart" buttons (event delegation)
+                document.querySelectorAll(".add-to-cart").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let listingId = this.getAttribute("data-listing-id");
+                        addToCart(listingId, this);
+                    });
+                });
+            })
+            .catch(error => console.error("Error fetching category listings:", error));
+    }
+    
+    // Function to add an item to the cart
+    function addToCart(listingId, button) {
+        fetch("/add_to_cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `listing_id=${listingId}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                button.innerHTML = "✔ Added to Cart";
+                button.classList.remove("btn-success");
+                button.classList.add("btn-secondary");
+                button.disabled = true;
+    
+                // ✅ Update cart counter immediately
+                updateCartCounter();
+    
+                // ✅ Show toast notification
+                showToast(data.message, "success");
+            } else {
+                // Show error notification if the item is already in the cart
+                showToast(data.message, "error");
+            }
+        })
+        .catch(error => console.error("Error adding to cart:", error));
+    }
+    
+    // ✅ Function to trigger toast notifications
+    function showToast(message, category) {
+        let toastContainer = document.getElementById("toast-container");
+    
+        let toastHTML = `
+            <div class="toast align-items-center text-white bg-${category === 'error' ? 'danger' : 'success'} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body text-center">
+                        <i class="fa-solid fa-shopping-cart small-icon"></i> Bizzy 🛒
+                        <i class="fas fa-${category === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+    
+        // Append toast to container
+        toastContainer.innerHTML = toastHTML;
+    
+        // Show Bootstrap toast dynamically
+        let toastElement = toastContainer.querySelector(".toast");
+        let toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+    
+    // ✅ Function to Fetch and Update Cart Counter Instantly
+    function updateCartCounter() {
+        fetch("/cart_count")
+        .then(response => response.json())
+        .then(data => {
+            let cartCounter = document.getElementById("cart-counter");
+            if (cartCounter) {
+                cartCounter.textContent = data.count; // Update count
+                cartCounter.style.display = data.count > 0 ? "inline-block" : "none"; // Hide if empty
+            }
+        })
+        .catch(error => console.error("Error updating cart counter:", error));
+    }
+    
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".add-to-cart").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Prevent page reload
+        
+                    let listingId = this.dataset.listingId;
+        
+                    fetch("/add_to_cart", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body: `listing_id=${listingId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        showFlashMessage(data.message, data.status);
+        
+                        if (data.status === "success") {
+                            this.innerText = "Added ✔";
+                            this.disabled = true;
+                            updateCartCounter();
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        
+               function updateCartCounter() {
+                    fetch("/cart_count")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Updated cart count:", data.count); // Debugging
+                
+                        let cartCounter = document.getElementById("cart-counter");
+                        if (cartCounter) {
+                            cartCounter.innerText = data.count;
+                
+                            if (data.count > 0) {
+                                cartCounter.style.display = "inline-block"; // Show when > 0
+                            } else {
+                                cartCounter.style.display = "none"; // Hide when 0
+                            }
+                        } else {
+                            console.error("Cart counter element not found!");
+                        }
+                    })
+                    .catch(error => console.error("Error updating cart counter:", error));
+                }
+                
+                
+            function showFlashMessage(message, category) {
+                let toastContainer = document.getElementById("toast-container");
+        
+                let toastHTML = `
+                    <div class="toast align-items-center text-white bg-${category === 'error' ? 'danger' : 'success'} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body text-center">
+                                <i class="fas fa-${category === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+        
+                toastContainer.innerHTML = toastHTML; // Inject the message
+                let toastElement = toastContainer.querySelector(".toast");
+                let bsToast = new bootstrap.Toast(toastElement); // Initialize Bootstrap Toast
+                bsToast.show(); // Show toast
+        
+                setTimeout(() => {
+
+                            bsToast.hide(); // Hide toast after 3 seconds
+                }, 3000);
+            }
+        });
+        </script>
+        
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let userId = "{{ current_user.id if current_user.is_authenticated else 'guest' }}";
+                let likedListings = JSON.parse(localStorage.getItem("likedListings_" + userId)) || {};
+                
+                document.querySelectorAll('.like-icon').forEach(icon => {
+                    let listingId = icon.getAttribute("data-listing-id");
+                    
+                    // Apply saved liked state per user
+                    if (likedListings[listingId]) {
+                        icon.classList.add("liked");
+                    }
+                    
+                    icon.addEventListener("click", function() {
+                        this.classList.toggle("liked");
+                        likedListings[listingId] = this.classList.contains("liked");
+                        localStorage.setItem("likedListings_" + userId, JSON.stringify(likedListings));
+                    });
+                });
+            });
+            
+
+            document.addEventListener("DOMContentLoaded", function () {
+                let container = document.querySelector(".custom-grid"); // Adjust based on your structure
+                let items = Array.from(container.children);
+            
+                // Shuffle listings using Fisher-Yates algorithm
+                for (let i = items.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [items[i], items[j]] = [items[j], items[i]];
+                }
+            
+                // Append shuffled listings back into the container
+                container.innerHTML = "";
+                items.forEach(item => container.appendChild(item));
+            });
+            
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // Function to generate a rating between 7.8 and 9.5
+                function generateRating() {
+                    return (Math.random() * (9.5 - 7.8) + 7.8).toFixed(1);
+                }
+            
+                // Select all rating elements and assign a random rating
+                document.querySelectorAll(".ratingValue").forEach(function (element) {
+                    element.textContent = generateRating();
+                });
+            });
+            
+        </script>
+        
+
+        <script>
+            function scrollCarousel(amount) {
+                document.querySelector('.listing-carousel').scrollBy({ left: amount, behavior: 'smooth' });
+            }
+            
+    // Shuffle function
+    function shuffleListings() {
+        let grid = document.getElementById("carouselGrid");
+        let listings = Array.from(grid.children);
+        listings.sort(() => Math.random() - 0.5); // Randomize order
+        listings.forEach(card => grid.appendChild(card)); // Re-append in shuffled order
+    }
+
+    // Run shuffle on page load
+    document.addEventListener("DOMContentLoaded", shuffleListings);
+
+    let carousel = document.querySelector('.listing-carousel');
+
+    carousel.addEventListener('wheel', function (event) {
+        event.preventDefault(); // Prevent default vertical scrolling
+        let scrollAmount = event.deltaY *500; // 2.5x faster
+        carousel.scrollBy({ left: scrollAmount, behavior: 'auto' });
+    });
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".up-rating").forEach(function (ratingContainer) {
+            let starCount = Math.random() > 0.5 ? 5 : 4; // Randomly pick 4 or 5 stars
+            let starsHTML = "";
+    
+            for (let i = 0; i < starCount; i++) {
+                starsHTML += `<i class="fas fa-star gold-star"></i>`;
+            }
+            if (starCount === 4) {
+                starsHTML += `<i class="fas fa-star white-star"></i>`; // Show last star as white if 4 stars
+            }
+    
+            ratingContainer.innerHTML = starsHTML;
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        let starContainers = document.querySelectorAll(".stars-rating"); // Select all star containers
+
+        starContainers.forEach(starContainer => {
+            let randomStars = Math.random() < 0.5 ? 4 : 5; // Randomly choose 4 or 5
+
+            let starsHTML = "";
+            for (let i = 0; i < 5; i++) {
+                if (i < randomStars) {
+                    starsHTML += '<i class="fas fa-star gold-star"></i>'; // Gold star
+                } else {
+                    starsHTML += '<i class="fas fa-star white-star"></i>'; // Gray star
+                }
+            }
+
+            starContainer.innerHTML = starsHTML; // Insert stars into the container
+        });
+    });
+</script>
+         
+ <style>
+
+    /* Layout Improvements */
+    .listing-container {
+        max-width: 12000px; /* Limits the width for a cleaner display */
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background-color: #fff6f996;
+        padding: 0px !important;
+
+    }
+
+    /* Listings Section */
+    .listing-content {
+        flex: 2;
+        width: 100%;    
+    }
+
+    .custom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        padding: 0px !important;
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border: none;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: none;
+    }
+
+    .card-img-top {
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+
+        .listing-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        .custom-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .card-img-top {
+            height: 140px;
+        }
+    }
+
+    /* Clickable Image */
+    .small-clickable-image {
+        cursor: pointer;
+        border-radius: 5px;
+        transition: transform 0.2s;
+    }
+
+    .small-clickable-image:hover {
+        transform: scale(1.05);
+    }
+
+    .custom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Default Layout */
+        gap: 5px !important; /* Gap between cards */
+    }
+    
+    /* Adjust grid for small screens (3 columns) */
+    @media (max-width: 720px) {
+        .custom-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    /* Adjust grid for large screens (6 columns) */
+    @media (min-width: 1024px) {
+        .custom-grid {
+            grid-template-columns: repeat(8, 1fr);
+            padding: 0px !important;
+        }
+        .offer-stamp {
+            position: absolute;
+            top: 210px; /* Adjust as needed */
+            right: 10px;
+            left: 75px;
+            color: white;
+            width: 40px; /* Increased size for better visibility */
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-10deg);
+           
+        }
+    }
+
+.text-gold {
+    color: rgba(255, 225, 0, 1);  /* Make text gold */
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0); /* Dark background for visibility */
+    padding: 3px 8px;
+    border-radius: 5px;
+}
+
+</style>
+<style>
+    /* Background Container */
+    .carousel-container {
+        background: #e4e3ba39; /* Light gray background */
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .listing-carousel {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 15px;
+        padding: 0px !important;
+        scroll-behavior: smooth;
+        scrollbar-width: none; /* Hide scrollbar */
+    }
+
+    .carousel-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 1px;
+        padding: 0px !important;
+    }
+
+    .listing-card {
+        flex: 0 0 auto;
+        width: 130px;
+        text-align: center;
+    }
+
+    .listing-card img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .listing-card p {
+        margin: 5px 0;
+        font-size: 0.85rem;
+    }
+
+
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 50%;
+    }
+
+    .carousel-left { left: 10px; }
+    .carousel-right { right: 10px; }
+
+    .stars-rating {
+        display: flex;
+        gap:4px;
+        padding: 3px 14px;
+        border-radius: 5px;
+        position: relative;
+    }
+    
+    .stars {
+        font-size: 10px;
+        position: relative;
+    }
+    
+    .gold-stars {
+        color: gold;
+    }
+    
+    .white-stars {
+        color: lightgray;
+    }
+    
+    /* Create a curved effect */
+    .stars-rating i:nth-child(1) { transform: translateY(24px) rotate(-15deg); }
+    .stars-rating i:nth-child(2) { transform: translateY(10px) rotate(-7deg); }
+    .stars-rating i:nth-child(3) { transform: translateY(7px) rotate(0deg); } /* Center star */
+    .stars-rating i:nth-child(4) { transform: translateY(12px) rotate(7deg); }
+    .stars-rating i:nth-child(5) { transform: translateY(27px) rotate(15deg); }
+    
+
+
+
+
+    .ad-card {
+        flex: 0 0 auto;
+        width: 200px; /* Adjust ad size */
+        text-align: center;
+        background-color:rgba(242, 255, 0, 1);
+        border-radius: 20px;
+        padding: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .ad-image {
+        width: 180px;
+        height: auto;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    gap: 5px;
+    padding: 0;
+    list-style: none;
+}
+
+.pagination .page-item {
+    display: inline-block;
+}
+
+.pagination .page-link {
+    color:rgba(255, 4, 4, 1);
+    padding: 8px 14px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 4, 4, 1);
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: rgba(255, 4, 4, 1);
+    color: white;
+}
+
+.pagination .active .page-link {
+    background-color:rgba(255, 4, 4, 1);
+    color: white;
+    border-color: rgba(255, 4, 4, 1);
+}
+
+.pagination .disabled .page-link {
+    color: #ccc;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+</style>
+{% endblock %}
